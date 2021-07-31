@@ -14,27 +14,22 @@ Function displayFlair(String flair, Bool override = false)
 	EndIf
 EndFunction
 
-int Function GetAllSexualAnimations()
-	; Lol, just straight up stole this from the ostim documentation.
-	; Probably caching this and having a rebuild button in the mcm would be better than doing this every time.
-	; but like, that will be hard.
+int Function GetAllSexualAnimations(int actors = 2)
 	int animations
-	animations = ODatabase.getDatabaseOArray() ;Get every single OSex animation in the game
-	animations = odatabase.getAnimationsWithActorCount(animations, 2) ; start by filtering all but the animations for 2 people
-	animations = odatabase.getHubAnimations(animations, false) ;take the results above, and filter out hub animations
-	animations = odatabase.getTransitoryAnimations(animations, false) ;again take the results above, and further filter out transitory animations
+	animations = ODatabase.getDatabaseOArray()
+	animations = odatabase.getAnimationsWithActorCount(animations, actors)
+	animations = odatabase.getHubAnimations(animations, false)
+	animations = odatabase.getTransitoryAnimations(animations, false)
 
-	return animations ;this JArray contains all sexy time animations
+	return animations
 EndFunction
 
 String Function ReturnAnimationOfType(String type = "Any", Bool threesome = False)
-    int animations = GetAllSexualAnimations()
-    ; Filter for 3 person animations
-    If (threesome == true)
-        animations = ODatabase.GetAnimationsWithActorCount(animations, 3)
-    Else
-        animations = ODatabase.GetAnimationsWithActorCount(animations, 2)
-    EndIf
+	if (threesome)
+    	int animations = GetAllSexualAnimations(3)
+	Else
+		int animations = GetAllSexualAnimations(2)
+	endif
 
     ; Filter for keyword
     If		(type == "Any")
@@ -153,23 +148,12 @@ Function SexForTwo(Actor partner, String context = "mutual", String type = "Any"
 		PlayerRef = followerRef
 		playerFemale = Ostim.isFemale(followerRef)
 	EndIf
-
-	If (anim == "Any")
-		If (context == "pleasuring")
-			OStim.StartScene(PlayerRef, partner, aggressive = true, aggressingActor = partner)
-		ElseIf (context == "pleasured")
-			OStim.StartScene(PlayerRef, partner, aggressive = true, aggressingActor = PlayerRef)
-		Else
-			OStim.StartScene(PlayerRef, partner)
-		EndIf
+	If (context == "pleasuring")
+		OStim.StartScene(partner, playerref, zstartinganimation = anim) 
+	ElseIf (context == "pleasured")
+		OStim.StartScene(PlayerRef, partner, zstartinganimation = anim) 
 	Else
-		If (context == "pleasuring")
-			OStim.StartScene(PlayerRef, partner, aggressive = true, aggressingActor = partner, zstartinganimation = anim) 
-		ElseIf (context == "pleasured")
-			OStim.StartScene(PlayerRef, partner, aggressive = true, aggressingActor = PlayerRef, zstartinganimation = anim) 
-		Else
-			OStim.StartScene(PlayerRef, partner, zstartinganimation = anim)
-		EndIf
+		OStim.StartScene(PlayerRef, partner, zstartinganimation = anim)
 	EndIf
 	while(OStim.AnimationRunning())
 		utility.wait(1.0)
@@ -193,9 +177,9 @@ Function SexForThree(Actor partner1, Actor partner2, String context = "mutual", 
 	EndIf
 	
 	If (context == "pleasuring")
-		OStim.StartScene(Dom=PlayerRef, Sub=partner1, zThirdActor=partner2, aggressingActor=partner1, zstartinganimation=anim) 
+		OStim.StartScene(Dom=partner1, Sub=PlayerRef, zThirdActor=partner2 zstartinganimation=anim) 
 	ElseIf (context == "pleasured")
-		OStim.StartScene(Dom=PlayerRef, Sub=partner1, zThirdActor=partner2, aggressingActor=PlayerRef, zstartinganimation=anim) 
+		OStim.StartScene(Dom=PlayerRef, Sub=partner1, zThirdActor=partner2, zstartinganimation=anim) 
 	Else
 		OStim.StartScene(Dom=PlayerRef, Sub=partner1, zThirdActor=partner2, zstartinganimation=anim)
 	EndIf
