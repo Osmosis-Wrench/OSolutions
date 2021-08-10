@@ -25,82 +25,56 @@ int Function GetAllSexualAnimations(int actors = 2)
 EndFunction
 
 String Function ReturnAnimationOfType(String type = "Any", Bool threesome = False)
+	int animations
 	if (threesome)
-    	int animations = GetAllSexualAnimations(3)
+    	animations = GetAllSexualAnimations(3)
 	Else
-		int animations = GetAllSexualAnimations(2)
+		animations = GetAllSexualAnimations(2)
 	endif
 
+	Int ret = Jmap.Object()
+
     ; Filter for keyword
-    If		(type == "Any")
-        int animation = Odatabase.GetObjectOArray(animations, utility.RandomInt(0, Odatabase.getLengthOArray(animations)))
-        return odatabase.getSceneId(animation)
-    ElseIf  (Type == "MFF")
-        animations = ODatabase.GetAnimationsFromModule(animations, "B3P")
+    If  (Type == "MFF")
+        JArray.addfromArray(ret, ODatabase.GetAnimationsFromModule(animations, "B3P"))
     ElseIf  (Type == "MMF")
-        animations = ODatabase.GetAnimationsFromModule(animations, "0M2F")
+        JArray.addfromArray(ret, ODatabase.GetAnimationsFromModule(animations, "0M2F"))
     ElseIf  (Type == "Anal")
-        animations = ODatabase.GetAnimationsWithAnimationClass(animations, "An")
+        JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "An"))
     ElseIf  (Type == "Vaginal")
-        animations = ODatabase.GetAnimationsWithAnimationClass(animations, "Sx")
+        JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "Sx"))
     ElseIf  (Type == "Cunnilingus")
-        int cunAnims1 = animations
-        int cunAnims2 = animations
-
-        cunAnims1 = ODatabase.GetAnimationsWithAnimationClass(animations, "VJ")
-        cunAnims2 = ODatabase.GetAnimationsWithAnimationClass(animations, "VBJ")
-        animations = QuickMergeOArray(cunAnims1, cunAnims2)
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "VJ"))
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "VBJ"))
     ElseIf  (Type == "Oral")
-        int bjAnims1 = animations
-        int bjAnims2 = animations
-
-        bjAnims1 =   ODatabase.GetAnimationsWithAnimationClass(animations, "BJ")
-        bjAnims2 =   ODatabase.GetAnimationsWithAnimationClass(animations, "ApPj")
-        animations = ODatabase.GetAnimationsWithAnimationClass(animations, "ApBj")
-        animations = QuickMergeOArray(bjAnims1, bjAnims2, animations)
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "BJ"))
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "ApPj"))
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "ApBj"))
     ElseIf  (Type == "Fist")
-        int fistAnims = animations
-
-        fistAnims =  ODatabase.GetAnimationsWithAnimationClass(animations, "Pf1")
-        animations = ODatabase.GetAnimationsWithAnimationClass(animations, "Pf2")
-        animations = QuickMergeOArray(fistAnims, animations)
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "Pf1"))
+		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "Pf2"))
     ElseIf  (Type == "Cowgirl")
-        animations = ODatabase.GetAnimationsWithName(animations, "cow", AllowPartialResult = True)
+        JArray.addfromArray(ret, ODatabase.GetAnimationsWithName(animations, "cow", AllowPartialResult = True))
     ElseIf  (Type == "Behind" || "Doggy")
-        animations = ODatabase.GetAnimationsWithName(animations, "dog", AllowPartialResult = True)
+        JArray.addFromArray(ret, ODatabase.GetAnimationsWithName(animations, "dog", AllowPartialResult = True))
     Else
-		Debug.Notification("Sexlab Solutions - Ostim failed to find valid scene. Notify dev.")
-        return "Fail"
+		Debug.Notification("OStim Solutions - Failed to find valid animation. Check console for more info.")
+		ConsoleUtil.PrintMessage("OStim Solutions: Failed to find a valid animation with the anim tag: "+type)
+		ConsoleUtil.PrintMessage("OStim Solutions: This is likely because you don't have threesome animations installed, but can also be thrown because of scene errors or an Ostim bug.")
+        return ""
     EndIf
 
-    If (Odatabase.getLengthOArray(animations) <= 0 && threesome == True) ;if animations is empty (ie there are none)
-		animations = ODatabase.GetAnimationsWithActorCount(animations, 3)
-		int animation = Odatabase.GetObjectOArray(animations, utility.RandomInt(0, Odatabase.getLengthOArray(animations)))
-        return odatabase.getSceneId(animation)
-	ElseIf (Odatabase.getLengthOArray(animations) <= 0 && threesome == False)
-		animations = ODatabase.GetAnimationsWithActorCount(animations, 2)
-		int animation = Odatabase.GetObjectOArray(animations, utility.RandomInt(0, Odatabase.getLengthOArray(animations)))
-        return odatabase.getSceneId(animation)
-    Else
-        int animation = Odatabase.GetObjectOArray(animations, utility.RandomInt(0, Odatabase.getLengthOArray(animations)))
-        return odatabase.getSceneId(animation)
-    EndIf
-EndFunction
-
-int Function QuickMergeOArray(Int OArray1, Int OArray2, Int OArray3 = -69)
-	If (OArray3 != -69)
-		int[] Merge = new Int[3]
-		Merge[0] = OArray1
-		Merge[1] = OArray2
-		Merge[2] = OArray3
-		int MergedOArray = ODatabase.MergeOArrays(Merge)
-		return MergedOArray
+	If (Odatabase.getLengthOArray(ret) <= 0 && threesome == True) ;if ret is empty (ie there are none)
+		ret = ODatabase.GetAnimationsWithActorCount(ret, 3)
+		int animation = Odatabase.GetObjectOArray(ret, utility.RandomInt(0, Odatabase.getLengthOArray(ret)))
+		return odatabase.getSceneId(animation)
+	ElseIf (Odatabase.getLengthOArray(ret) <= 0 && threesome == False)
+		ret = ODatabase.GetAnimationsWithActorCount(ret, 2)
+		int animation = Odatabase.GetObjectOArray(ret, utility.RandomInt(0, Odatabase.getLengthOArray(ret)))
+		return odatabase.getSceneId(animation)
 	Else
-		int[] Merge = new Int[2]
-		Merge[0] = OArray1
-		Merge[1] = OArray2
-		int MergedOArray = ODatabase.MergeOArrays(Merge)
-		return MergedOArray
+		int animation = Odatabase.GetObjectOArray(ret, utility.RandomInt(0, Odatabase.getLengthOArray(ret)))
+		return odatabase.getSceneId(animation)
 	EndIf
 EndFunction
 
@@ -135,9 +109,14 @@ Actor Function GetFollowerForScene(bool partnerFemale)
 EndFunction
 
 Function SexForTwo(Actor partner, String context = "mutual", String type = "Any", int victim = -1, bool aggressive = false, bool allowLeadIn = true)	
-	String anim = ReturnAnimationOfType(type, False)
+	string anim = ""
+	if (type != "Any") ; Save processing for starting anim if scene is generic, and instead start with basic start scene.
+		anim = ReturnAnimationOfType(type, False)
+	endif
+
 	Bool playerFemale = Ostim.IsFemale(PlayerRef)
 	Bool partnerFemale = Ostim.IsFemale(partner)
+	actor playerOrFollower = playerRef
 	Bool playerVictim = false
 	Bool partnerVictim = false
 
@@ -145,15 +124,15 @@ Function SexForTwo(Actor partner, String context = "mutual", String type = "Any"
 	Actor followerRef = GetFollowerForScene(partnerFemale)
 	If (followerRef != None)
 		; Swap player with follower.
-		PlayerRef = followerRef
+		playerOrFollower = followerRef
 		playerFemale = Ostim.isFemale(followerRef)
 	EndIf
 	If (context == "pleasuring")
-		OStim.StartScene(partner, playerref, zstartinganimation = anim) 
+		OStim.StartScene(partner, playerOrFollower, zstartinganimation = anim) 
 	ElseIf (context == "pleasured")
-		OStim.StartScene(PlayerRef, partner, zstartinganimation = anim) 
+		OStim.StartScene(playerOrFollower, partner, zstartinganimation = anim) 
 	Else
-		OStim.StartScene(PlayerRef, partner, zstartinganimation = anim)
+		OStim.StartScene(playerOrFollower, partner, zstartinganimation = anim)
 	EndIf
 	while(OStim.AnimationRunning())
 		utility.wait(1.0)
@@ -161,9 +140,14 @@ Function SexForTwo(Actor partner, String context = "mutual", String type = "Any"
 EndFunction
 
 Function SexForThree(Actor partner1, Actor partner2, String context = "mutual", String type = "Any", int victim = -1, bool aggressive = false, bool allowLeadIn = true)
-	String anim = ReturnAnimationOfType(type, True)
+	string anim = ""
+	if (type != "Any") ; Save processing for starting anim if scene is generic, and instead start with basic start scene.
+		anim = ReturnAnimationOfType(type, False)
+	endif
+	
 	Bool playerFemale = Ostim.IsFemale(PlayerRef)
 	Bool partnerFemale = Ostim.IsFemale(partner1)
+	actor playerOrFollower = playerRef
 	Bool playerVictim = false
 	Bool partnerVictim = false
 	
@@ -172,16 +156,16 @@ Function SexForThree(Actor partner1, Actor partner2, String context = "mutual", 
 	
 	If (followerRef != None)
 		; Swap player with follower.
-		PlayerRef = followerRef
+		playerOrFollower = followerRef
 		playerFemale = Ostim.isFemale(followerRef)
 	EndIf
 	
 	If (context == "pleasuring")
-		OStim.StartScene(Dom=partner1, Sub=PlayerRef, zThirdActor=partner2 zstartinganimation=anim) 
+		OStim.StartScene(Dom=partner1, Sub=playerOrFollower, zThirdActor=partner2, zstartinganimation=anim) 
 	ElseIf (context == "pleasured")
-		OStim.StartScene(Dom=PlayerRef, Sub=partner1, zThirdActor=partner2, zstartinganimation=anim) 
+		OStim.StartScene(Dom=playerOrFollower, Sub=partner1, zThirdActor=partner2, zstartinganimation=anim) 
 	Else
-		OStim.StartScene(Dom=PlayerRef, Sub=partner1, zThirdActor=partner2, zstartinganimation=anim)
+		OStim.StartScene(Dom=playerOrFollower, Sub=partner1, zThirdActor=partner2, zstartinganimation=anim)
 	EndIf
 	while(OStim.AnimationRunning())
 		utility.wait(1.0)
