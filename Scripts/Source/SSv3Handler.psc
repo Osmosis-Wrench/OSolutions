@@ -113,6 +113,8 @@ Function SexForTwo(Actor partner, String context = "mutual", String type = "Any"
 	if (type != "Any") ; Save processing for starting anim if scene is generic, and instead start with basic start scene.
 		anim = ReturnAnimationOfType(type, False)
 	endif
+	
+	Ostim.AddSceneMetadata("OSolutions")
 
 	Bool playerFemale = Ostim.IsFemale(PlayerRef)
 	Bool partnerFemale = Ostim.IsFemale(partner)
@@ -145,6 +147,8 @@ Function SexForThree(Actor partner1, Actor partner2, String context = "mutual", 
 		anim = ReturnAnimationOfType(type, False)
 	endif
 	
+	Ostim.AddSceneMetadata("OSolutions")
+
 	Bool playerFemale = Ostim.IsFemale(PlayerRef)
 	Bool partnerFemale = Ostim.IsFemale(partner1)
 	actor playerOrFollower = playerRef
