@@ -34,7 +34,7 @@
     </Folders>
     <ZipFiles Output="@Dist">
         <ZipFile Name="@ModName @Version" RootDir="@MyProject" Compression="deflate">
-            <Match>*.pex|*.psc|*.esp|</Match>
+            <Match>*.pex|*.psc|*.esp|*.seq</Match>
         </ZipFile>
     </ZipFiles>
 </PapyrusProject>

@@ -15,17 +15,17 @@ Function displayFlair(String flair, Bool override = false)
 EndFunction
 
 int Function GetAllSexualAnimations(int actors = 2)
-	int animations
-	animations = ODatabase.getDatabaseOArray()
-	animations = odatabase.getAnimationsWithActorCount(animations, actors)
-	animations = odatabase.getHubAnimations(animations, false)
-	animations = odatabase.getTransitoryAnimations(animations, false)
+	int ret
+	ret = ODatabase.getDatabaseOArray()
+	ret = odatabase.getAnimationsWithActorCount(ret, actors)
+	ret = odatabase.getHubAnimations(ret, false)
+	ret = odatabase.getTransitoryAnimations(ret, false)
 
-	return animations
+	return ret
 EndFunction
 
 String Function ReturnAnimationOfType(String type = "Any", Bool threesome = False)
-	int animations
+	int animations = jmap.Object()
 	if (threesome)
     	animations = GetAllSexualAnimations(3)
 	Else
@@ -59,8 +59,8 @@ String Function ReturnAnimationOfType(String type = "Any", Bool threesome = Fals
         JArray.addFromArray(ret, ODatabase.GetAnimationsWithName(animations, "dog", AllowPartialResult = True))
     Else
 		Debug.Notification("OStim Solutions - Failed to find valid animation. Check console for more info.")
-		ConsoleUtil.PrintMessage("OStim Solutions: Failed to find a valid animation with the anim tag: "+type)
-		ConsoleUtil.PrintMessage("OStim Solutions: This is likely because you don't have threesome animations installed, but can also be thrown because of scene errors or an Ostim bug.")
+		MiscUtil.PrintConsole("OStim Solutions: Failed to find a valid animation with the anim tag: "+type)
+		MiscUtil.PrintConsole("OStim Solutions: This is likely because you don't have threesome animations installed, but can also be thrown because of scene errors or an Ostim bug.")
         return ""
     EndIf
 
