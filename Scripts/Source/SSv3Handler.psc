@@ -14,49 +14,41 @@ Function displayFlair(String flair, Bool override = false)
 	EndIf
 EndFunction
 
-int Function GetAllSexualAnimations(int actors = 2)
-	int ret
-	ret = ODatabase.getDatabaseOArray()
-	ret = odatabase.getAnimationsWithActorCount(ret, actors)
-	ret = odatabase.getHubAnimations(ret, false)
-	ret = odatabase.getTransitoryAnimations(ret, false)
-
-	return ret
-EndFunction
-
 String Function ReturnAnimationOfType(String type = "Any", Bool threesome = False)
-	int animations = jmap.Object()
+	int animations
+	animations = ODatabase.getDatabaseOArray()
+	MiscUtil.PrintConsole("1Animations found:" + JValue.Count(animations))
 	if (threesome)
-    	animations = GetAllSexualAnimations(3)
-	Else
-		animations = GetAllSexualAnimations(2)
+		animations = odatabase.getAnimationsWithActorCount(animations, 3)
+	else
+		animations = odatabase.getAnimationsWithActorCount(animations, 2)
 	endif
+	MiscUtil.PrintConsole("2Animations found:" + JValue.Count(animations))
 
-	Int ret = Jmap.Object()
+	Int ret
 
-    ; Filter for keyword
     If  (Type == "MFF")
-        JArray.addfromArray(ret, ODatabase.GetAnimationsFromModule(animations, "B3P"))
+        ret = ODatabase.GetAnimationsFromModule(animations, "B3P")
     ElseIf  (Type == "MMF")
-        JArray.addfromArray(ret, ODatabase.GetAnimationsFromModule(animations, "0M2F"))
+        ret = ODatabase.GetAnimationsFromModule(animations, "0M2F")
     ElseIf  (Type == "Anal")
-        JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "An"))
+        ret = ODatabase.GetAnimationsWithAnimationClass(animations, "An")
     ElseIf  (Type == "Vaginal")
-        JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "Sx"))
+        ret = ODatabase.GetAnimationsWithAnimationClass(animations, "Sx")
     ElseIf  (Type == "Cunnilingus")
-		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "VJ"))
+		ret = ODatabase.GetAnimationsWithAnimationClass(animations, "VJ")
 		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "VBJ"))
     ElseIf  (Type == "Oral")
-		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "BJ"))
+		ret = ODatabase.GetAnimationsWithAnimationClass(animations, "BJ")
 		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "ApPj"))
 		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "ApBj"))
     ElseIf  (Type == "Fist")
-		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "Pf1"))
+		ret = ODatabase.GetAnimationsWithAnimationClass(animations, "Pf1")
 		JArray.addfromArray(ret, ODatabase.GetAnimationsWithAnimationClass(animations, "Pf2"))
     ElseIf  (Type == "Cowgirl")
-        JArray.addfromArray(ret, ODatabase.GetAnimationsWithName(animations, "cow", AllowPartialResult = True))
+        ret = ODatabase.GetAnimationsWithName(animations, "cow", AllowPartialResult = True)
     ElseIf  (Type == "Behind" || "Doggy")
-        JArray.addFromArray(ret, ODatabase.GetAnimationsWithName(animations, "dog", AllowPartialResult = True))
+        ret = ODatabase.GetAnimationsWithName(animations, "dog", AllowPartialResult = True)
     Else
 		Debug.Notification("OStim Solutions - Failed to find valid animation. Check console for more info.")
 		MiscUtil.PrintConsole("OStim Solutions: Failed to find a valid animation with the anim tag: "+type)
@@ -114,7 +106,9 @@ Function SexForTwo(Actor partner, String context = "mutual", String type = "Any"
 		anim = ReturnAnimationOfType(type, False)
 	endif
 	
-	Ostim.AddSceneMetadata("OSolutions")
+	Ostim.AddSceneMetadata("OSolutions") ; Declares this scene will be a OSolutions scene, so others can check for this.
+	Ostim.AddSceneMetadata("or_player_nocheat") ; Makes player spouses not care about cheating for this scene.
+	Ostim.AddSceneMetadata("or_npc_nocheat") ; Makes npc spouses not care about cheating for this scene.
 
 	Bool playerFemale = Ostim.IsFemale(PlayerRef)
 	Bool partnerFemale = Ostim.IsFemale(partner)
@@ -147,7 +141,9 @@ Function SexForThree(Actor partner1, Actor partner2, String context = "mutual", 
 		anim = ReturnAnimationOfType(type, False)
 	endif
 	
-	Ostim.AddSceneMetadata("OSolutions")
+	Ostim.AddSceneMetadata("OSolutions") ; Declares this scene will be a OSolutions scene, so others can check for this.
+	Ostim.AddSceneMetadata("or_player_nocheat") ; ORomance Compat: Makes player spouses not care about cheating for this scene.
+	Ostim.AddSceneMetadata("or_npc_nocheat") ; ORomance Compat: Makes npc spouses not care about cheating for this scene.
 
 	Bool playerFemale = Ostim.IsFemale(PlayerRef)
 	Bool partnerFemale = Ostim.IsFemale(partner1)
